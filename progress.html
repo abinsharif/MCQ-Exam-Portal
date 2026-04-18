@@ -209,7 +209,8 @@
   <!-- Content rendered by JS -->
 </div>
 
-<!-- Settings Modal -->
+<!-- ── SETTINGS MODAL ── -->
+<!-- ── SETTINGS MODAL ── -->
 <div class="modal-overlay" id="settings-modal" onclick="if(event.target===this)closeSettings()">
   <div class="modal-box">
     <div class="modal-header">
@@ -217,19 +218,80 @@
       <button class="icon-btn" onclick="closeSettings()"><i class="bi bi-x-lg"></i></button>
     </div>
     <div class="modal-body">
+      <p class="setting-group-title">Profile</p>
       <div class="setting-row">
-        <div><div class="setting-label">Your Name</div></div>
+        <div>
+          <div class="setting-label">Your Name</div>
+          <div class="setting-sub">Shown on result screen</div>
+        </div>
         <input type="text" id="set-username" class="form-control-custom" style="width:140px;min-height:unset;padding:8px 12px;font-family:var(--font);font-size:0.85rem" placeholder="Enter name" onchange="settingChanged('userName', this.value)"/>
       </div>
+
+      <p class="setting-group-title">Exam</p>
       <div class="setting-row">
-        <div><div class="setting-label">Sound Effects</div></div>
+        <div>
+          <div class="setting-label">Questions Per Page</div>
+          <div class="setting-sub">How many questions per screen</div>
+        </div>
+        <select id="set-qpp" class="form-control-custom" style="width:100px;min-height:unset;padding:8px 12px" onchange="settingChanged('questionsPerPage', this.value)">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="5">5</option>
+          <option value="10">10</option>
+          <option value="15">15</option>
+          <option value="20">20</option>
+          <option value="30">30</option>
+          <option value="all">All</option>
+        </select>
+      </div>
+      <div class="setting-row">
+        <div>
+          <div class="setting-label">Practice Mode</div>
+          <div class="setting-sub">Won't save to history</div>
+        </div>
+        <label class="toggle-wrap"><input type="checkbox" id="set-practice" onchange="settingChanged('practiceMode', this.checked)"><span class="toggle-slider"></span></label>
+      </div>
+      <div class="setting-row">
+        <div>
+          <div class="setting-label">Show Pause Button</div>
+          <div class="setting-sub">Hidden by default</div>
+        </div>
+        <label class="toggle-wrap"><input type="checkbox" id="set-pausebtn" onchange="settingChanged('pauseBtn', this.checked)"><span class="toggle-slider"></span></label>
+      </div>
+
+      <p class="setting-group-title">Appearance</p>
+      <div class="setting-row">
+        <div>
+          <div class="setting-label">Font Size</div>
+        </div>
+        <select id="set-fontsize" class="form-control-custom" style="width:110px;min-height:unset;padding:8px 12px" onchange="settingChanged('fontSize', this.value)">
+          <option value="small">Small</option>
+          <option value="medium">Medium</option>
+          <option value="large">Large</option>
+          <option value="xlarge">X-Large</option>
+        </select>
+      </div>
+
+      <p class="setting-group-title">Interactions</p>
+      <div class="setting-row">
+        <div>
+          <div class="setting-label">Sound Effects</div>
+          <div class="setting-sub">Click sounds, warnings, results</div>
+        </div>
         <label class="toggle-wrap"><input type="checkbox" id="set-sound" onchange="settingChanged('soundEnabled', this.checked)"><span class="toggle-slider"></span></label>
       </div>
-      <div style="margin-top:16px">
-        <button class="btn-ghost w-100" onclick="clearAllData()" style="color:var(--red);border-color:rgba(248,81,73,0.3)">
-          <i class="bi bi-trash3-fill"></i> Clear All Data
-        </button>
+      <div class="setting-row">
+        <div>
+          <div class="setting-label">Keyboard Shortcuts</div>
+          <div class="setting-sub">Enter, 1-4, P, Arrow Keys</div>
+        </div>
+        <label class="toggle-wrap"><input type="checkbox" id="set-keyboard" onchange="settingChanged('keyboardEnabled', this.checked)"><span class="toggle-slider"></span></label>
       </div>
+
+      <p class="setting-group-title">Data</p>
+      <button class="btn-ghost w-100" onclick="clearAllData()" style="color:var(--red);border-color:rgba(248,81,73,0.3);margin-top:4px">
+        <i class="bi bi-trash3-fill"></i> Clear All Data
+      </button>
     </div>
   </div>
 </div>

@@ -141,6 +141,11 @@ function escHtml(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
+function findLibraryExamByB64(b64) {
+  const clean = b64.trim();
+  return EXAM_DB.find(e => (e.b64 || '').trim() === clean) || null;
+}
+
 function copyToClipboard(text, msg = 'Copied!') {
   navigator.clipboard.writeText(text).then(() => showToast(msg, 'success')).catch(() => {
     const ta = document.createElement('textarea');
@@ -230,6 +235,19 @@ function startExamFromB64(b64, meta = {}) {
   const decoded = decodeB64(b64);
   if (!decoded.success) { showToast(decoded.error, 'error'); return false; }
 
+  const libraryExam = typeof EXAM_DB !== 'undefined' ? findLibraryExamByB64(b64) : null;
+  const finalMeta = {
+    ...(libraryExam ? {
+      title: libraryExam.title,
+      subject: libraryExam.subject,
+      chapter: libraryExam.chapter,
+      difficulty: libraryExam.difficulty,
+      language: libraryExam.language
+    } : {}),
+    ...decoded.meta,
+    ...meta
+  };
+
   questions = decoded.questions;
   userAnswers = new Array(questions.length).fill(null);
   currentPage = 0;
@@ -238,13 +256,9 @@ function startExamFromB64(b64, meta = {}) {
   warningPlayed = false;
   paused = false;
   examStartTime = Date.now();
-
-  // Timer: 1.5 min per question, max 60min
   totalSeconds = Math.min(questions.length * 90, 3600);
   remainingSeconds = totalSeconds;
-
-  // Save meta for history
-  window._examMeta = { ...meta, questionCount: questions.length };
+  window._examMeta = { ...finalMeta, questionCount: questions.length, b64: b64.trim() };
 
   renderExam();
   startTimer();
@@ -256,13 +270,24 @@ function decodeB64(b64) {
   try {
     const decoded = atob(b64.trim());
     const utf8 = decodeURIComponent(escape(decoded));
-    const q = JSON.parse(utf8);
+    const data = JSON.parse(utf8);
+
+    let meta = {};
+    let q = data;
+
+    if (data && typeof data === 'object' && !Array.isArray(data)) {
+      meta = data.meta || {};
+      q = data.questions || [];
+    }
+
     if (!Array.isArray(q) || !q.length) return { success: false, error: 'Invalid question format' };
+
     for (let i = 0; i < q.length; i++) {
       if (!q[i].question || !q[i].options || !q[i].answer) return { success: false, error: `Q${i+1} missing fields` };
       if (!Array.isArray(q[i].options) || q[i].options.length !== 4) return { success: false, error: `Q${i+1} must have 4 options` };
     }
-    return { success: true, questions: q };
+
+    return { success: true, questions: q, meta };
   } catch(e) {
     return { success: false, error: 'Invalid Base64 or JSON: ' + e.message };
   }
@@ -814,7 +839,7 @@ function getHistory() {
 }
 
 // ── RESTART ───────────────────────────────────────────────────────────────────
-function restartExam() {
+function restartExam() {/*
   questions = [];
   userAnswers = [];
   currentPage = 0;
@@ -836,6 +861,8 @@ function restartExam() {
   if (warn) warn.style.display = 'none';
 
   window.scrollTo(0, 0);
+  */
+ window.location.href ='./index.html';
 }
 
 // ── KEYBOARD SHORTCUTS ────────────────────────────────────────────────────────
@@ -846,14 +873,27 @@ document.addEventListener('keydown', e => {
   const examVisible = document.getElementById('exam-page')?.style.display !== 'none' &&
                       document.getElementById('exam-page')?.style.display !== '';
 
+  if (!examVisible) return;
+  if (paused) return;
+
   // P = Pause (only in exam)
   if (e.key === 'p' || e.key === 'P') {
-    if (examVisible && SETTINGS.pauseBtn) togglePause();
+    if (SETTINGS.pauseBtn) togglePause();
     return;
   }
 
-  if (!examVisible) return;
-  if (paused) return;
+  // Left / Right arrows = previous / next page
+  if (e.key === 'ArrowLeft') {
+    e.preventDefault();
+    if (qpp !== Infinity) goPage(currentPage - 1);
+    return;
+  }
+
+  if (e.key === 'ArrowRight') {
+    e.preventDefault();
+    if (qpp !== Infinity) goPage(currentPage + 1);
+    return;
+  }
 
   // Space = next page / scroll
   if (e.code === 'Space') {
@@ -877,10 +917,9 @@ document.addEventListener('keydown', e => {
     const { start } = getPageQuestions();
     const qi = start;
     const q = questions[qi];
-    if (q) selectAnswer(qi, q.options[parseInt(e.key)-1]);
+    if (q) selectAnswer(qi, q.options[parseInt(e.key) - 1]);
   }
 });
-
 // ── INIT ──────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   loadSettings();

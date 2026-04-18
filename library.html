@@ -8,278 +8,380 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
   <link rel="stylesheet" href="style.css"/>
   <style>
-  .page-hero {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 2.5rem 1rem;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
+    .page-hero {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 2.5rem 1rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
 
-  .page-hero::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse at 50% 0%, rgba(240,165,0,0.06) 0%, transparent 60%);
-    pointer-events: none;
-  }
+    .page-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(240,165,0,0.06) 0%, transparent 60%);
+      pointer-events: none;
+    }
 
-  .page-hero h1 { font-size: clamp(1.5rem, 4vw, 2.2rem); font-weight: 800; margin-bottom: 6px; }
-  .page-hero p { color: var(--muted); font-size: 0.9rem; }
+    .page-hero h1 { font-size: clamp(1.5rem, 4vw, 2.2rem); font-weight: 800; margin-bottom: 6px; }
+    .page-hero p { color: var(--muted); font-size: 0.9rem; }
 
-  .page-body { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
+    .page-body {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 24px 16px;
+    }
 
-  /* Stats bar */
-  .stats-bar {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 24px;
-    flex-wrap: wrap;
-  }
+    .library-layout {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 16px;
+      align-items: start;
+    }
 
-  .lib-stat {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 12px 18px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
+    .filter-sidebar {
+      position: sticky;
+      top: 82px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1rem;
+    }
 
-  .lib-stat i { font-size: 1.2rem; color: var(--accent); }
-  .lib-stat-val { font-size: 1.2rem; font-weight: 700; font-family: var(--mono); line-height: 1; }
-  .lib-stat-lbl { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+    .filter-panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 1rem;
+    }
 
-  /* Filter bar */
-  .filter-bar {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 1.25rem;
-    margin-bottom: 24px;
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-    align-items: center;
-  }
+    .filter-panel-header h2 {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 800;
+    }
 
-  .filter-bar .search-wrap {
-    flex: 1;
-    min-width: 200px;
-    position: relative;
-  }
+    .filter-panel-sub {
+      color: var(--muted);
+      font-size: 0.8rem;
+      margin-top: 3px;
+    }
 
-  .search-wrap i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
+    .filter-block {
+      margin-bottom: 14px;
+    }
 
-  .search-input {
-    width: 100%;
-    background: var(--bg);
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius);
-    color: var(--text);
-    font-family: var(--font);
-    font-size: 0.88rem;
-    padding: 10px 14px 10px 36px;
-    outline: none;
-    transition: all 0.2s;
-  }
+    .filter-label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
 
-  .search-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(240,165,0,0.1); }
-  .search-input::placeholder { color: var(--muted); }
+    .filter-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
 
-  .filter-chips {
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
-    align-items: center;
-  }
+    .search-input {
+      width: 100%;
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 0.88rem;
+      padding: 10px 14px 10px 36px;
+      outline: none;
+      transition: all 0.2s;
+    }
 
-  .fchip {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 50px;
-    color: var(--muted);
-    padding: 5px 12px;
-    font-size: 0.78rem;
-    cursor: pointer;
-    transition: all 0.18s;
-    font-family: var(--font);
-    font-weight: 500;
-  }
+    .search-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(240,165,0,0.1); }
+    .search-input::placeholder { color: var(--muted); }
 
-  .fchip:hover { border-color: var(--accent); color: var(--accent); }
-  .fchip.active { background: var(--accent); border-color: var(--accent); color: #0d1117; font-weight: 600; }
+    .search-wrap {
+      position: relative;
+    }
 
-  .sort-wrap { display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: var(--muted); }
+    .search-wrap i {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      pointer-events: none;
+    }
 
-  /* Grid */
-  .exam-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 16px;
-  }
+    .mobile-filter-toggle {
+      display: none;
+      width: 100%;
+      margin-bottom: 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-weight: 600;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
 
-  @media (max-width: 480px) { .exam-grid { grid-template-columns: 1fr; } }
+    .reset-filters-btn {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      padding: 10px 14px;
+      font-size: 0.82rem;
+      cursor: pointer;
+      transition: all 0.18s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font);
+      white-space: nowrap;
+    }
 
-  /* Exam card */
-  .exam-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    transition: all 0.2s;
-    animation: fadeUp 0.4s ease both;
-    position: relative;
-    overflow: hidden;
-  }
+    .reset-filters-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
 
-  .exam-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, var(--accent), var(--accent2));
-    opacity: 0;
-    transition: opacity 0.2s;
-  }
+    .sort-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
 
-  .exam-card:hover { border-color: rgba(240,165,0,0.35); transform: translateY(-2px); box-shadow: var(--shadow); }
-  .exam-card:hover::before { opacity: 1; }
+    .library-main {
+      min-width: 0;
+    }
 
-  .card-top {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 8px;
-  }
+    .stats-bar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
 
-  .card-subject-icon {
-    width: 40px; height: 40px;
-    border-radius: 10px;
-    background: rgba(240,165,0,0.1);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1.1rem;
-    color: var(--accent);
-    flex-shrink: 0;
-  }
+    .lib-stat {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
 
-  .card-badges { display: flex; flex-wrap: wrap; gap: 5px; }
+    .lib-stat i { font-size: 1.2rem; color: var(--accent); }
+    .lib-stat-val { font-size: 1.2rem; font-weight: 700; font-family: var(--mono); line-height: 1; }
+    .lib-stat-lbl { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
 
-  .card-title {
-    font-size: 1rem;
-    font-weight: 700;
-    line-height: 1.3;
-    color: var(--text);
-  }
+    .exam-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
 
-  .card-meta {
-    display: flex;
-    gap: 12px;
-    font-size: 0.78rem;
-    color: var(--muted);
-    flex-wrap: wrap;
-  }
+    @media (max-width: 900px) {
+      .library-layout {
+        grid-template-columns: 1fr;
+      }
 
-  .card-meta span { display: flex; align-items: center; gap: 4px; }
+      .filter-sidebar {
+        display: none;
+        position: static;
+      }
 
-  .card-b64 {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 8px 10px;
-    font-family: var(--mono);
-    font-size: 0.7rem;
-    color: var(--muted);
-    word-break: break-all;
-    max-height: 52px;
-    overflow: hidden;
-    position: relative;
-  }
+      .filter-sidebar.open {
+        display: block;
+      }
 
-  .card-b64::after {
-    content: '';
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 20px;
-    background: linear-gradient(transparent, var(--bg));
-  }
+      .mobile-filter-toggle {
+        display: flex;
+      }
+    }
 
-  .card-actions { display: flex; gap: 8px; }
+    @media (max-width: 480px) {
+      .exam-grid { grid-template-columns: 1fr; }
+    }
 
-  .btn-copy-b64 {
-    flex: 1;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--muted);
-    padding: 8px 12px;
-    font-size: 0.82rem;
-    cursor: pointer;
-    transition: all 0.18s;
-    display: flex; align-items: center; justify-content: center; gap: 6px;
-    font-family: var(--font);
-  }
+    .exam-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: all 0.2s;
+      animation: fadeUp 0.4s ease both;
+      position: relative;
+      overflow: hidden;
+    }
 
-  .btn-copy-b64:hover { border-color: var(--border); color: var(--text); }
+    .exam-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
 
-  .btn-start-exam {
-    flex: 2;
-    background: var(--accent);
-    border: none;
-    border-radius: 8px;
-    color: #0d1117;
-    padding: 8px 14px;
-    font-size: 0.85rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.18s;
-    display: flex; align-items: center; justify-content: center; gap: 6px;
-    font-family: var(--font);
-  }
+    .exam-card:hover { border-color: rgba(240,165,0,0.35); transform: translateY(-2px); box-shadow: var(--shadow); }
+    .exam-card:hover::before { opacity: 1; }
 
-  .btn-start-exam:hover { background: #ffc233; }
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+    }
 
-  /* Best score indicator */
-  .best-score-bar {
-    height: 4px;
-    background: var(--border);
-    border-radius: 4px;
-    overflow: hidden;
-  }
+    .card-subject-icon {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      background: rgba(240,165,0,0.1);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
 
-  .best-score-fill {
-    height: 100%;
-    border-radius: 4px;
-    transition: width 0.6s ease;
-  }
+    .card-badges { display: flex; flex-wrap: wrap; gap: 5px; }
 
-  .no-results {
-    grid-column: 1/-1;
-    text-align: center;
-    padding: 64px 24px;
-    color: var(--muted);
-  }
+    .card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      line-height: 1.3;
+      color: var(--text);
+    }
 
-  .no-results i { font-size: 3rem; display: block; margin-bottom: 12px; color: var(--border); }
+    .card-meta {
+      display: flex;
+      gap: 12px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      flex-wrap: wrap;
+    }
 
-  /* Subject icons */
-  .icon-math { color: var(--blue); background: rgba(88,166,255,0.1); }
-  .icon-physics { color: var(--purple); background: rgba(188,140,255,0.1); }
-  .icon-chemistry { color: var(--green); background: rgba(63,185,80,0.1); }
-  .icon-biology { color: var(--accent2); background: rgba(255,107,53,0.1); }
-  .icon-bangla { color: var(--accent); background: rgba(240,165,0,0.1); }
-  .icon-english { color: var(--blue); background: rgba(88,166,255,0.1); }
-  .icon-history { color: '#e67e22'; background: 'rgba(230,126,34,0.1)'; }
+    .card-meta span { display: flex; align-items: center; gap: 4px; }
+
+    .card-b64 {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--muted);
+      word-break: break-all;
+      max-height: 52px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .card-b64::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 20px;
+      background: linear-gradient(transparent, var(--bg));
+    }
+
+    .card-actions { display: flex; gap: 8px; }
+
+    .btn-copy-b64 {
+      flex: 1;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--muted);
+      padding: 8px 12px;
+      font-size: 0.82rem;
+      cursor: pointer;
+      transition: all 0.18s;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      font-family: var(--font);
+    }
+
+    .btn-copy-b64:hover { border-color: var(--border); color: var(--text); }
+
+    .btn-start-exam {
+      flex: 2;
+      background: var(--accent);
+      border: none;
+      border-radius: 8px;
+      color: #0d1117;
+      padding: 8px 14px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.18s;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      font-family: var(--font);
+    }
+
+    .btn-start-exam:hover { background: #ffc233; }
+
+    .best-score-bar {
+      height: 4px;
+      background: var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .best-score-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.6s ease;
+    }
+
+    .no-results {
+      grid-column: 1/-1;
+      text-align: center;
+      padding: 64px 24px;
+      color: var(--muted);
+    }
+
+    .no-results i { font-size: 3rem; display: block; margin-bottom: 12px; color: var(--border); }
+
+    .icon-math { color: var(--blue); background: rgba(88,166,255,0.1); }
+    .icon-physics { color: var(--purple); background: rgba(188,140,255,0.1); }
+    .icon-chemistry { color: var(--green); background: rgba(63,185,80,0.1); }
+    .icon-biology { color: var(--accent2); background: rgba(255,107,53,0.1); }
+    .icon-bangla { color: var(--accent); background: rgba(240,165,0,0.1); }
+    .icon-english { color: var(--blue); background: rgba(88,166,255,0.1); }
+    .icon-history { color: #e67e22; background: rgba(230,126,34,0.1); }
+
+    .filter-sidebar .form-control-custom,
+    .filter-sidebar .search-input {
+      width: 100%;
+    }
+
+    .filter-note {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      line-height: 1.45;
+    }
   </style>
 </head>
 <body data-theme="dark">
 
-<!-- NAVBAR -->
 <nav class="navbar-custom">
   <a class="nav-logo" href="index.html"><i class="bi bi-mortarboard-fill"></i> MCQ<span class="logo-dot">.</span>Portal</a>
   <div class="nav-links">
@@ -302,52 +404,110 @@
   <a class="nav-link" href="help.html" style="display:flex"><i class="bi bi-question-circle me-2"></i> Help</a>
 </div>
 
-<!-- HERO -->
 <div class="page-hero">
   <div class="logo-badge" style="display:inline-flex;align-items:center;gap:7px;background:rgba(240,165,0,0.1);border:1px solid rgba(240,165,0,0.25);border-radius:50px;padding:5px 13px;margin-bottom:1rem;font-size:0.72rem;font-weight:700;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase;">
     <i class="bi bi-collection-fill"></i> Exam Library
   </div>
   <h1>Ready-to-Use <span style="color:var(--accent)">Exam Sets</span></h1>
   <p>Click to start or copy the Base64 string</p>
-  <div class='tip-box'>
+  <div class="tip-box">
+    <i class="bi bi-info-circle-fill"></i>
     <div>
-      <div class="tip-desc">If you are confused seeing only 3 exams, just know that this happened due to my procastination. Unfortunately I myself have SSC exams so I can't add more right now.</div>
-    </div>
-</div>
-
-<!-- BODY -->
-<div class="page-body">
-
-  <!-- Stats -->
-  <div class="stats-bar" id="lib-stats"></div>
-
-  <!-- Filters -->
-  <div class="filter-bar">
-    <div class="search-wrap">
-      <i class="bi bi-search"></i>
-      <input type="text" class="search-input" id="search-input" placeholder="Search by title, subject, chapter..." oninput="filterExams()"/>
-    </div>
-    <div class="filter-chips" id="subject-filters"></div>
-    <div class="filter-chips" id="diff-filters"></div>
-    <div class="filter-chips" id="lang-filters"></div>
-    <div class="sort-wrap">
-      <i class="bi bi-sort-down"></i>
-      <select id="sort-select" class="form-control-custom" style="width:130px;min-height:unset;padding:7px 12px;font-size:0.82rem" onchange="filterExams()">
-        <option value="default">Default</option>
-        <option value="title">A → Z</option>
-        <option value="difficulty-asc">Easiest first</option>
-        <option value="difficulty-desc">Hardest first</option>
-        <option value="count-desc">Most questions</option>
-        <option value="count-asc">Fewest questions</option>
-      </select>
+      <div class="tip-desc">If you are confused seeing only 3 exams, just know that this happened due to my procrastination. Unfortunately I myself have SSC exams so I can't add more right now.</div>
     </div>
   </div>
-
-  <!-- Grid -->
-  <div class="exam-grid" id="exam-grid"></div>
 </div>
 
-<!-- Settings Modal (shared) -->
+<div class="page-body">
+  <button class="mobile-filter-toggle" onclick="toggleFilters()">
+    <i class="bi bi-funnel-fill"></i> Filters
+  </button>
+
+  <div class="library-layout">
+    <aside class="filter-sidebar" id="filter-sidebar">
+      <div class="filter-panel-header">
+        <div>
+          <h2>Filters</h2>
+          <div class="filter-panel-sub">Narrow down the exam list</div>
+        </div>
+        <button class="reset-filters-btn" onclick="resetFilters()">
+          <i class="bi bi-arrow-counterclockwise"></i> Reset
+        </button>
+      </div>
+
+      <div class="filter-block">
+        <label class="filter-label" for="search-input">Search</label>
+        <div class="search-wrap">
+          <i class="bi bi-search"></i>
+          <input type="text" class="search-input" id="search-input" placeholder="Search by title, subject, chapter..." oninput="filterExams()"/>
+        </div>
+      </div>
+
+      <div class="filter-block">
+        <label class="filter-label" for="subject-select">Subject</label>
+        <select id="subject-select" class="form-control-custom" onchange="setSelectFilter('subject', this.value)">
+          <option value="all">All Subjects</option>
+        </select>
+      </div>
+
+      <div class="filter-block">
+        <label class="filter-label" for="chapter-select">Chapter</label>
+        <select id="chapter-select" class="form-control-custom" onchange="setSelectFilter('chapter', this.value)">
+          <option value="all">All Chapters</option>
+        </select>
+      </div>
+
+      <div class="filter-block">
+        <label class="filter-label" for="history-select">Status</label>
+        <select id="history-select" class="form-control-custom" onchange="setSelectFilter('history', this.value)">
+          <option value="all">All Status</option>
+          <option value="attempted">Attempted</option>
+          <option value="unattempted">Unattempted</option>
+        </select>
+      </div>
+
+      <div class="filter-block">
+        <label class="filter-label" for="difficulty-select">Difficulty</label>
+        <select id="difficulty-select" class="form-control-custom" onchange="setSelectFilter('difficulty', this.value)">
+          <option value="all">All Levels</option>
+          <option value="easy">Easy</option>
+          <option value="medium">Medium</option>
+          <option value="hard">Hard</option>
+        </select>
+      </div>
+
+      <div class="filter-block">
+        <label class="filter-label" for="language-select">Language</label>
+        <select id="language-select" class="form-control-custom" onchange="setSelectFilter('language', this.value)">
+          <option value="all">Any Language</option>
+        </select>
+      </div>
+
+      <div class="filter-block">
+        <label class="filter-label" for="sort-select">Sort</label>
+        <select id="sort-select" class="form-control-custom" onchange="filterExams()">
+          <option value="default">Default</option>
+          <option value="title">A → Z</option>
+          <option value="difficulty-asc">Easiest first</option>
+          <option value="difficulty-desc">Hardest first</option>
+          <option value="count-desc">Most MCQs</option>
+          <option value="count-asc">Fewest MCQs</option>
+        </select>
+      </div>
+
+      <div class="filter-note">
+        Tip: use Reset to clear everything quickly.
+      </div>
+    </aside>
+
+    <main class="library-main">
+      <div class="stats-bar" id="lib-stats"></div>
+      <div class="exam-grid" id="exam-grid"></div>
+    </main>
+  </div>
+</div>
+
+<!-- ── SETTINGS MODAL ── -->
 <div class="modal-overlay" id="settings-modal" onclick="if(event.target===this)closeSettings()">
   <div class="modal-box">
     <div class="modal-header">
@@ -355,23 +515,80 @@
       <button class="icon-btn" onclick="closeSettings()"><i class="bi bi-x-lg"></i></button>
     </div>
     <div class="modal-body">
+      <p class="setting-group-title">Profile</p>
       <div class="setting-row">
-        <div><div class="setting-label">Your Name</div></div>
+        <div>
+          <div class="setting-label">Your Name</div>
+          <div class="setting-sub">Shown on result screen</div>
+        </div>
         <input type="text" id="set-username" class="form-control-custom" style="width:140px;min-height:unset;padding:8px 12px;font-family:var(--font);font-size:0.85rem" placeholder="Enter name" onchange="settingChanged('userName', this.value)"/>
       </div>
+
+      <p class="setting-group-title">Exam</p>
       <div class="setting-row">
-        <div><div class="setting-label">Theme</div></div>
-        <button class="btn-ghost" onclick="toggleTheme()" style="padding:7px 12px;font-size:0.82rem"><i id="theme-icon2" class="bi bi-moon-fill"></i></button>
+        <div>
+          <div class="setting-label">Questions Per Page</div>
+          <div class="setting-sub">How many questions per screen</div>
+        </div>
+        <select id="set-qpp" class="form-control-custom" style="width:100px;min-height:unset;padding:8px 12px" onchange="settingChanged('questionsPerPage', this.value)">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="5">5</option>
+          <option value="10">10</option>
+          <option value="15">15</option>
+          <option value="20">20</option>
+          <option value="30">30</option>
+          <option value="all">All</option>
+        </select>
       </div>
       <div class="setting-row">
-        <div><div class="setting-label">Sound Effects</div></div>
+        <div>
+          <div class="setting-label">Practice Mode</div>
+          <div class="setting-sub">Won't save to history</div>
+        </div>
+        <label class="toggle-wrap"><input type="checkbox" id="set-practice" onchange="settingChanged('practiceMode', this.checked)"><span class="toggle-slider"></span></label>
+      </div>
+      <div class="setting-row">
+        <div>
+          <div class="setting-label">Show Pause Button</div>
+          <div class="setting-sub">Hidden by default</div>
+        </div>
+        <label class="toggle-wrap"><input type="checkbox" id="set-pausebtn" onchange="settingChanged('pauseBtn', this.checked)"><span class="toggle-slider"></span></label>
+      </div>
+
+      <p class="setting-group-title">Appearance</p>
+      <div class="setting-row">
+        <div>
+          <div class="setting-label">Font Size</div>
+        </div>
+        <select id="set-fontsize" class="form-control-custom" style="width:110px;min-height:unset;padding:8px 12px" onchange="settingChanged('fontSize', this.value)">
+          <option value="small">Small</option>
+          <option value="medium">Medium</option>
+          <option value="large">Large</option>
+          <option value="xlarge">X-Large</option>
+        </select>
+      </div>
+
+      <p class="setting-group-title">Interactions</p>
+      <div class="setting-row">
+        <div>
+          <div class="setting-label">Sound Effects</div>
+          <div class="setting-sub">Click sounds, warnings, results</div>
+        </div>
         <label class="toggle-wrap"><input type="checkbox" id="set-sound" onchange="settingChanged('soundEnabled', this.checked)"><span class="toggle-slider"></span></label>
       </div>
-      <div style="margin-top:16px">
-        <button class="btn-ghost w-100" onclick="clearAllData()" style="color:var(--red);border-color:rgba(248,81,73,0.3)">
-          <i class="bi bi-trash3-fill"></i> Clear All Data
-        </button>
+      <div class="setting-row">
+        <div>
+          <div class="setting-label">Keyboard Shortcuts</div>
+          <div class="setting-sub">Enter, 1-4, P, Arrow Keys</div>
+        </div>
+        <label class="toggle-wrap"><input type="checkbox" id="set-keyboard" onchange="settingChanged('keyboardEnabled', this.checked)"><span class="toggle-slider"></span></label>
       </div>
+
+      <p class="setting-group-title">Data</p>
+      <button class="btn-ghost w-100" onclick="clearAllData()" style="color:var(--red);border-color:rgba(248,81,73,0.3);margin-top:4px">
+        <i class="bi bi-trash3-fill"></i> Clear All Data
+      </button>
     </div>
   </div>
 </div>
@@ -395,7 +612,21 @@ const SUBJECT_ICONS = {
   default: 'bi-journal-bookmark-fill icon-bangla',
 };
 
-let activeFilters = { subject: 'all', difficulty: 'all', language: 'all' };
+let activeFilters = {
+  subject: 'all',
+  chapter: 'all',
+  difficulty: 'all',
+  language: 'all',
+  history: 'all'
+};
+
+function escHtml(s) {
+  return String(s || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
 
 function getSubjectIcon(subject) {
   const key = (subject || '').toLowerCase();
@@ -413,7 +644,7 @@ function getBestScore(id) {
 }
 
 function renderStats() {
-  const subjects = [...new Set(EXAM_DB.map(e => e.subject))].length;
+  const subjects = [...new Set(EXAM_DB.map(e => e.subject).filter(Boolean))].length;
   const total = EXAM_DB.length;
   const qs = EXAM_DB.reduce((s, e) => s + (e.questionCount || 0), 0);
   document.getElementById('lib-stats').innerHTML = `
@@ -423,52 +654,70 @@ function renderStats() {
   `;
 }
 
-function renderFilters() {
-  const subjects = ['all', ...new Set(EXAM_DB.map(e => e.subject))];
-  const diffs = ['all', 'easy', 'medium', 'hard'];
-  const langs = ['all', ...new Set(EXAM_DB.map(e => e.language))];
+function renderFilterOptions() {
+  const subjects = ['all', ...new Set(EXAM_DB.map(e => e.subject).filter(Boolean))];
+  const chapters = ['all', ...new Set(EXAM_DB.map(e => e.chapter).filter(Boolean))];
+  const languages = ['all', ...new Set(EXAM_DB.map(e => e.language).filter(Boolean))];
 
-  document.getElementById('subject-filters').innerHTML = subjects.map(s =>
-    `<button class="fchip ${activeFilters.subject === s ? 'active' : ''}" onclick="setFilter('subject','${s}')">${s === 'all' ? 'All Subjects' : s}</button>`
-  ).join('');
+  const subjectSelect = document.getElementById('subject-select');
+  const chapterSelect = document.getElementById('chapter-select');
+  const languageSelect = document.getElementById('language-select');
 
-  document.getElementById('diff-filters').innerHTML = diffs.map(d =>
-    `<button class="fchip ${activeFilters.difficulty === d ? 'active' : ''}" onclick="setFilter('difficulty','${d}')">${d === 'all' ? 'All Levels' : DIFF_LABELS[d]}</button>`
-  ).join('');
-
-  document.getElementById('lang-filters').innerHTML = langs.map(l =>
-    `<button class="fchip ${activeFilters.language === l ? 'active' : ''}" onclick="setFilter('language','${l}')">${l === 'all' ? 'Any Language' : l}</button>`
-  ).join('');
+  if (subjectSelect) subjectSelect.innerHTML = subjects.map(s => `<option value="${s}">${s === 'all' ? 'All Subjects' : escHtml(s)}</option>`).join('');
+  if (chapterSelect) chapterSelect.innerHTML = chapters.map(c => `<option value="${c}">${c === 'all' ? 'All Chapters' : escHtml(c)}</option>`).join('');
+  if (languageSelect) languageSelect.innerHTML = languages.map(l => `<option value="${l}">${l === 'all' ? 'Any Language' : escHtml(l)}</option>`).join('');
 }
 
-function setFilter(type, val) {
+function setSelectFilter(type, val) {
   activeFilters[type] = val;
-  renderFilters();
   filterExams();
 }
 
+function renderFilters() {
+  renderFilterOptions();
+}
+
 function filterExams() {
-  const q = document.getElementById('search-input').value.toLowerCase();
-  const sort = document.getElementById('sort-select').value;
+  const q = (document.getElementById('search-input')?.value || '').toLowerCase().trim();
+  const sort = document.getElementById('sort-select')?.value || 'default';
 
   let data = EXAM_DB.filter(e => {
+    const title = (e.title || '').toLowerCase();
+    const subject = (e.subject || '').toLowerCase();
+    const chapter = (e.chapter || '').toLowerCase();
+    const language = (e.language || '').toLowerCase();
+
     const matchSearch = !q ||
-      (e.title||'').toLowerCase().includes(q) ||
-      (e.subject||'').toLowerCase().includes(q) ||
-      (e.chapter||'').toLowerCase().includes(q);
+      title.includes(q) ||
+      subject.includes(q) ||
+      chapter.includes(q) ||
+      language.includes(q);
+
     const matchSubject = activeFilters.subject === 'all' || e.subject === activeFilters.subject;
+    const matchChapter = activeFilters.chapter === 'all' || e.chapter === activeFilters.chapter;
     const matchDiff = activeFilters.difficulty === 'all' || e.difficulty === activeFilters.difficulty;
     const matchLang = activeFilters.language === 'all' || e.language === activeFilters.language;
-    return matchSearch && matchSubject && matchDiff && matchLang;
+
+    const best = getBestScore(e.id);
+    const attempted = best !== null;
+    const matchHistory =
+      activeFilters.history === 'all' ||
+      (activeFilters.history === 'attempted' && attempted) ||
+      (activeFilters.history === 'unattempted' && !attempted);
+
+    return matchSearch && matchSubject && matchChapter && matchDiff && matchLang && matchHistory;
   });
 
-  // Sort
-  if (sort === 'title') data.sort((a,b) => (a.title||'').localeCompare(b.title||''));
-  else if (sort === 'difficulty-asc') data.sort((a,b) => (DIFF_ORDER[a.difficulty]||1) - (DIFF_ORDER[b.difficulty]||1));
-  else if (sort === 'difficulty-desc') data.sort((a,b) => (DIFF_ORDER[b.difficulty]||1) - (DIFF_ORDER[a.difficulty]||1));
-  else if (sort === 'count-desc') data.sort((a,b) => (b.questionCount||0) - (a.questionCount||0));
-  else if (sort === 'count-asc') data.sort((a,b) => (a.questionCount||0) - (b.questionCount||0));
+  if (sort === 'title') data.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+  else if (sort === 'difficulty-asc') data.sort((a, b) => (DIFF_ORDER[a.difficulty] || 1) - (DIFF_ORDER[b.difficulty] || 1));
+  else if (sort === 'difficulty-desc') data.sort((a, b) => (DIFF_ORDER[b.difficulty] || 1) - (DIFF_ORDER[a.difficulty] || 1));
+  else if (sort === 'count-desc') data.sort((a, b) => (b.questionCount || 0) - (a.questionCount || 0));
+  else if (sort === 'count-asc') data.sort((a, b) => (a.questionCount || 0) - (b.questionCount || 0));
 
+  renderExamCards(data);
+}
+
+function renderExamCards(data) {
   const grid = document.getElementById('exam-grid');
 
   if (!data.length) {
@@ -482,13 +731,14 @@ function filterExams() {
     const bestHtml = best !== null
       ? `<div style="margin-bottom:4px"><div style="display:flex;justify-content:space-between;font-size:0.72rem;margin-bottom:4px"><span style="color:var(--muted)">Best score</span><span style="color:${best>=70?'var(--green)':best>=50?'var(--accent)':'var(--red)'};font-weight:600">${best}%</span></div><div class="best-score-bar"><div class="best-score-fill" style="width:${best}%;background:${best>=70?'var(--green)':best>=50?'var(--accent)':'var(--red)'}"></div></div></div>`
       : '';
+
     return `
       <div class="exam-card" style="animation-delay:${idx*0.05}s">
         <div class="card-top">
           <div class="card-subject-icon ${iconClass}"><i class="bi ${iconClass.split(' ')[0]}"></i></div>
           <div class="card-badges">
-            <span class="badge-pill badge-${e.difficulty}">${DIFF_LABELS[e.difficulty]||e.difficulty}</span>
-            <span class="badge-pill badge-${e.language?.toLowerCase()}">${e.language}</span>
+            <span class="badge-pill badge-${e.difficulty}">${DIFF_LABELS[e.difficulty] || e.difficulty}</span>
+            <span class="badge-pill badge-${(e.language || '').toLowerCase()}">${escHtml(e.language)}</span>
           </div>
         </div>
         <div>
@@ -512,13 +762,55 @@ function filterExams() {
 function startExamCard(id) {
   const exam = EXAM_DB.find(e => e.id === id);
   if (!exam) { showToast('Exam not found', 'error'); return; }
-  localStorage.setItem('mcq_pending_exam', JSON.stringify({ b64: exam.b64, meta: { subject: exam.subject, chapter: exam.chapter, title: exam.title, difficulty: exam.difficulty, language: exam.language } }));
+  localStorage.setItem('mcq_pending_exam', JSON.stringify({
+    b64: exam.b64,
+    meta: {
+      subject: exam.subject,
+      chapter: exam.chapter,
+      title: exam.title,
+      difficulty: exam.difficulty,
+      language: exam.language
+    }
+  }));
   window.location.href = 'index.html?startFromLib=1';
 }
 
 function toggleMobileMenu() {
   const m = document.getElementById('mobile-menu');
   m.style.display = m.style.display === 'none' ? 'block' : 'none';
+}
+
+function toggleFilters() {
+  const panel = document.getElementById('filter-sidebar');
+  panel.classList.toggle('open');
+}
+
+function resetFilters() {
+  activeFilters = {
+    subject: 'all',
+    chapter: 'all',
+    difficulty: 'all',
+    language: 'all',
+    history: 'all'
+  };
+
+  const search = document.getElementById('search-input');
+  const sort = document.getElementById('sort-select');
+  const subject = document.getElementById('subject-select');
+  const chapter = document.getElementById('chapter-select');
+  const history = document.getElementById('history-select');
+  const difficulty = document.getElementById('difficulty-select');
+  const language = document.getElementById('language-select');
+
+  if (search) search.value = '';
+  if (sort) sort.value = 'default';
+  if (subject) subject.value = 'all';
+  if (chapter) chapter.value = 'all';
+  if (history) history.value = 'all';
+  if (difficulty) difficulty.value = 'all';
+  if (language) language.value = 'all';
+
+  filterExams();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
