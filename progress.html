@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Progress — MCQ Portal</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+  .page-body { max-width: 1000px; margin: 0 auto; padding: 24px 16px; }
+
+  .page-hero {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 2.5rem 1rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .page-hero::before {
+    content:'';position:absolute;inset:0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(88,166,255,0.06) 0%, transparent 60%);
+    pointer-events:none;
+  }
+  .page-hero h1 { font-size: clamp(1.4rem,4vw,2rem); font-weight:800; margin-bottom:6px; }
+  .page-hero p { color:var(--muted); font-size:0.88rem; }
+
+  /* Summary cards */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+
+  .summary-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+    text-align: center;
+    animation: fadeUp 0.4s ease both;
+  }
+
+  .summary-card i { font-size: 1.4rem; margin-bottom: 8px; display: block; }
+  .summary-val { font-size: 1.5rem; font-weight: 700; font-family: var(--mono); line-height: 1; }
+  .summary-lbl { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 4px; }
+
+  /* Chart card */
+  .chart-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    margin-bottom: 20px;
+    animation: fadeUp 0.4s ease;
+  }
+
+  .chart-card h3 { font-size: 0.85rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1rem; }
+
+  .chart-wrap { position: relative; height: 220px; }
+
+  /* Weak subjects */
+  .weak-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border2);
+  }
+  .weak-item:last-child { border-bottom: none; }
+  .weak-subject { font-weight: 600; font-size: 0.88rem; flex: 1; }
+  .weak-bar-wrap { flex: 2; }
+  .weak-bar-track { height: 6px; background: var(--border); border-radius: 4px; overflow: hidden; }
+  .weak-bar-fill { height: 100%; border-radius: 4px; transition: width 0.8s ease; }
+  .weak-pct { font-size: 0.82rem; font-weight: 600; min-width: 38px; text-align: right; }
+
+  /* Table */
+  .history-table-wrap {
+    overflow-x: auto;
+    border-radius: var(--radius-lg);
+  }
+
+  .history-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.85rem;
+  }
+
+  .history-table th {
+    background: var(--surface2);
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  .history-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border2);
+    vertical-align: middle;
+    background: var(--surface);
+  }
+
+  .history-table tr:last-child td { border-bottom: none; }
+  .history-table tr:hover td { background: var(--surface2); }
+  .history-table th:first-child { border-radius: var(--radius) 0 0 0; }
+  .history-table th:last-child { border-radius: 0 var(--radius) 0 0; }
+
+  .score-pill {
+    display: inline-flex; align-items: center;
+    padding: 3px 10px;
+    border-radius: 50px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    font-family: var(--mono);
+  }
+
+  .score-pill.high { background: rgba(63,185,80,0.12); color: var(--green); }
+  .score-pill.mid { background: rgba(240,165,0,0.12); color: var(--accent); }
+  .score-pill.low { background: rgba(248,81,73,0.12); color: var(--red); }
+
+  /* Personal bests */
+  .pb-list { display: flex; flex-direction: column; gap: 10px; }
+
+  .pb-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    gap: 8px;
+  }
+
+  .pb-subject { font-size: 0.88rem; font-weight: 600; }
+  .pb-score { font-family: var(--mono); font-weight: 700; font-size: 1rem; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+  @media (max-width: 640px) { .two-col { grid-template-columns: 1fr; } }
+
+  /* Best badge */
+  .best-badge {
+    background: rgba(240,165,0,0.1);
+    border: 1px solid rgba(240,165,0,0.3);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.88rem;
+    animation: fadeUp 0.4s ease;
+  }
+
+  .best-badge i { font-size: 1.5rem; color: var(--accent); }
+
+  /* Export btn */
+  .top-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  </style>
+</head>
+<body data-theme="dark">
+
+<nav class="navbar-custom">
+  <a class="nav-logo" href="index.html"><i class="bi bi-mortarboard-fill"></i> MCQ<span class="logo-dot">.</span>Portal</a>
+  <div class="nav-links">
+    <a class="nav-link" href="index.html"><i class="bi bi-house-fill"></i> Exam</a>
+    <a class="nav-link" href="library.html"><i class="bi bi-collection-fill"></i> Library</a>
+    <a class="nav-link active" href="progress.html"><i class="bi bi-graph-up"></i> Progress</a>
+    <a class="nav-link" href="help.html"><i class="bi bi-question-circle"></i> Help</a>
+  </div>
+  <div class="nav-actions">
+    <button class="icon-btn" onclick="toggleTheme()"><i id="theme-icon" class="bi bi-moon-fill"></i></button>
+    <button class="icon-btn" onclick="openSettings()"><i class="bi bi-gear-fill"></i></button>
+    <button class="icon-btn d-md-none" onclick="toggleMobileMenu()"><i class="bi bi-list"></i></button>
+  </div>
+</nav>
+<div id="mobile-menu" style="display:none; background:var(--surface); border-bottom:1px solid var(--border); padding:8px 16px;">
+  <a class="nav-link" href="index.html" style="display:flex"><i class="bi bi-house-fill me-2"></i> Exam</a>
+  <a class="nav-link" href="library.html" style="display:flex"><i class="bi bi-collection-fill me-2"></i> Library</a>
+  <a class="nav-link active" href="progress.html" style="display:flex"><i class="bi bi-graph-up me-2"></i> Progress</a>
+  <a class="nav-link" href="help.html" style="display:flex"><i class="bi bi-question-circle me-2"></i> Help</a>
+</div>
+
+<div class="page-hero">
+  <div style="display:inline-flex;align-items:center;gap:7px;background:rgba(88,166,255,0.1);border:1px solid rgba(88,166,255,0.25);border-radius:50px;padding:5px 13px;margin-bottom:1rem;font-size:0.72rem;font-weight:700;color:var(--blue);letter-spacing:0.1em;text-transform:uppercase;">
+    <i class="bi bi-graph-up"></i> My Progress
+  </div>
+  <h1>Track Your <span style="color:var(--blue)">Performance</span></h1>
+  <p>All your exam results in one place</p>
+</div>
+
+<div class="page-body" id="main-body">
+  <!-- Content rendered by JS -->
+</div>
+
+<!-- Settings Modal -->
+<div class="modal-overlay" id="settings-modal" onclick="if(event.target===this)closeSettings()">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div style="font-weight:700;font-size:1rem"><i class="bi bi-gear-fill me-2" style="color:var(--accent)"></i>Settings</div>
+      <button class="icon-btn" onclick="closeSettings()"><i class="bi bi-x-lg"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="setting-row">
+        <div><div class="setting-label">Your Name</div></div>
+        <input type="text" id="set-username" class="form-control-custom" style="width:140px;min-height:unset;padding:8px 12px;font-family:var(--font);font-size:0.85rem" placeholder="Enter name" onchange="settingChanged('userName', this.value)"/>
+      </div>
+      <div class="setting-row">
+        <div><div class="setting-label">Sound Effects</div></div>
+        <label class="toggle-wrap"><input type="checkbox" id="set-sound" onchange="settingChanged('soundEnabled', this.checked)"><span class="toggle-slider"></span></label>
+      </div>
+      <div style="margin-top:16px">
+        <button class="btn-ghost w-100" onclick="clearAllData()" style="color:var(--red);border-color:rgba(248,81,73,0.3)">
+          <i class="bi bi-trash3-fill"></i> Clear All Data
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<script src="script.js"></script>
+<script>
+let progressChart = null;
+let subjectChart = null;
+
+function renderProgress() {
+  const history = getHistory();
+  const body = document.getElementById('main-body');
+
+  if (!history.length) {
+    body.innerHTML = `
+      <div class="empty-state" style="margin-top:64px">
+        <i class="bi bi-inbox" style="font-size:3rem;color:var(--border);display:block;margin-bottom:12px"></i>
+        <h4>No exam history yet</h4>
+        <p>Complete an exam to see your progress here.</p>
+        <a href="index.html" class="btn-primary-custom mt-3 d-inline-flex"><i class="bi bi-play-fill"></i> Start an Exam</a>
+      </div>`;
+    return;
+  }
+
+  // Compute stats
+  const total = history.length;
+  const avgScore = Math.round(history.reduce((s,e) => s + (e.score/e.total*100), 0) / total);
+  const totalQs = history.reduce((s,e) => s + (e.total||0), 0);
+  const totalTime = history.reduce((s,e) => s + (e.timeTaken||0), 0);
+  const avgTime = total > 0 ? Math.round(totalTime / totalQs) : 0;
+  const bestEntry = history.reduce((a,b) => (a.score/a.total) > (b.score/b.total) ? a : b);
+  const bestPct = Math.round(bestEntry.score/bestEntry.total*100);
+
+  // Subject stats
+  const subjectMap = {};
+  history.forEach(e => {
+    const s = e.subject || 'Unknown';
+    if (!subjectMap[s]) subjectMap[s] = { total: 0, correct: 0, count: 0 };
+    subjectMap[s].total += e.total;
+    subjectMap[s].correct += e.score;
+    subjectMap[s].count++;
+  });
+
+  const subjects = Object.entries(subjectMap).sort((a,b) => (a[1].correct/a[1].total) - (b[1].correct/b[1].total));
+  const bestSubjectEntry = Object.entries(subjectMap).sort((a,b) => (b[1].correct/b[1].total) - (a[1].correct/a[1].total))[0];
+
+  body.innerHTML = `
+    <!-- Best badge -->
+    <div class="best-badge">
+      <i class="bi bi-trophy-fill"></i>
+      <div>
+        <div style="font-weight:700">Personal Best: ${bestPct}%</div>
+        <div style="font-size:0.8rem;color:var(--muted)">${escHtml(bestEntry.subject||'Unknown')} — ${escHtml(bestEntry.title||bestEntry.chapter||'')} · ${new Date(bestEntry.date).toLocaleDateString()}</div>
+      </div>
+    </div>
+
+    <!-- Top actions -->
+    <div class="top-actions">
+      <button class="btn-ghost" onclick="exportCSV()"><i class="bi bi-download"></i> Export CSV</button>
+      <button class="btn-ghost" style="color:var(--red);border-color:rgba(248,81,73,0.3)" onclick="clearHistory()"><i class="bi bi-trash3"></i> Clear History</button>
+    </div>
+
+    <!-- Summary -->
+    <div class="summary-grid">
+      <div class="summary-card" style="animation-delay:0s"><i class="bi bi-clipboard2-check-fill" style="color:var(--accent)"></i><div class="summary-val">${total}</div><div class="summary-lbl">Exams Taken</div></div>
+      <div class="summary-card" style="animation-delay:0.05s"><i class="bi bi-percent" style="color:var(--green)"></i><div class="summary-val">${avgScore}%</div><div class="summary-lbl">Avg Score</div></div>
+      <div class="summary-card" style="animation-delay:0.1s"><i class="bi bi-question-circle-fill" style="color:var(--blue)"></i><div class="summary-val">${totalQs}</div><div class="summary-lbl">Total Qs</div></div>
+      <div class="summary-card" style="animation-delay:0.15s"><i class="bi bi-stopwatch-fill" style="color:var(--purple)"></i><div class="summary-val">${avgTime}s</div><div class="summary-lbl">Avg /Question</div></div>
+      <div class="summary-card" style="animation-delay:0.2s"><i class="bi bi-trophy-fill" style="color:var(--accent)"></i><div class="summary-val">${bestPct}%</div><div class="summary-lbl">Personal Best</div></div>
+      ${bestSubjectEntry ? `<div class="summary-card" style="animation-delay:0.25s"><i class="bi bi-star-fill" style="color:var(--accent)"></i><div class="summary-val" style="font-size:1rem">${escHtml(bestSubjectEntry[0])}</div><div class="summary-lbl">Best Subject</div></div>` : ''}
+    </div>
+
+    <!-- Score graph -->
+    <div class="chart-card">
+      <h3><i class="bi bi-graph-up me-1"></i> Score History</h3>
+      <div class="chart-wrap"><canvas id="score-chart"></canvas></div>
+    </div>
+
+    <div class="two-col">
+      <!-- Weak subjects -->
+      <div class="chart-card" style="margin-bottom:0">
+        <h3><i class="bi bi-exclamation-triangle-fill me-1"></i> Subject Performance</h3>
+        <div id="weak-subjects-list">
+          ${subjects.map(([sub, data]) => {
+            const pct = Math.round(data.correct/data.total*100);
+            const color = pct >= 70 ? 'var(--green)' : pct >= 50 ? 'var(--accent)' : 'var(--red)';
+            return `<div class="weak-item">
+              <div class="weak-subject">${escHtml(sub)}</div>
+              <div class="weak-bar-wrap">
+                <div class="weak-bar-track"><div class="weak-bar-fill" style="width:${pct}%;background:${color}"></div></div>
+              </div>
+              <div class="weak-pct" style="color:${color}">${pct}%</div>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>
+
+      <!-- Personal bests -->
+      <div class="chart-card" style="margin-bottom:0">
+        <h3><i class="bi bi-award-fill me-1"></i> Personal Bests per Subject</h3>
+        <div class="pb-list">
+          ${Object.entries(subjectMap).map(([sub, data]) => {
+            const pct = Math.round(data.correct/data.total*100);
+            const color = pct>=70?'var(--green)':pct>=50?'var(--accent)':'var(--red)';
+            return `<div class="pb-item">
+              <div><div class="pb-subject">${escHtml(sub)}</div><div style="font-size:0.72rem;color:var(--muted)">${data.count} exam${data.count>1?'s':''}</div></div>
+              <div class="pb-score" style="color:${color}">${pct}%</div>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>
+    </div>
+
+    <!-- History table -->
+    <div class="chart-card" style="margin-top:20px">
+      <h3><i class="bi bi-table me-1"></i> Exam History</h3>
+      <div class="history-table-wrap">
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Date</th>
+              <th>Subject</th>
+              <th>Chapter / Title</th>
+              <th>Score</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${history.map((e, i) => {
+              const pct = Math.round(e.score/e.total*100);
+              const cls = pct>=70?'high':pct>=50?'mid':'low';
+              const m = Math.floor((e.timeTaken||0)/60);
+              const s = (e.timeTaken||0)%60;
+              const timeStr = m>0?`${m}m ${s}s`:`${s}s`;
+              return `<tr>
+                <td style="color:var(--muted);font-family:var(--mono)">${i+1}</td>
+                <td style="white-space:nowrap;color:var(--muted)">${new Date(e.date).toLocaleDateString()}</td>
+                <td>${escHtml(e.subject||'—')}</td>
+                <td style="color:var(--muted)">${escHtml(e.title||e.chapter||'—')}</td>
+                <td><span class="score-pill ${cls}">${e.score}/${e.total} (${pct}%)</span></td>
+                <td style="color:var(--muted);font-family:var(--mono)">${timeStr}</td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+
+  // Render chart
+  renderScoreChart(history);
+}
+
+function renderScoreChart(history) {
+  const canvas = document.getElementById('score-chart');
+  if (!canvas) return;
+  if (progressChart) { progressChart.destroy(); }
+
+  const data = history.slice(0, 20).reverse();
+  const labels = data.map((e, i) => `#${history.length - data.length + i + 1}`);
+  const scores = data.map(e => Math.round(e.score / e.total * 100));
+
+  const isDark = SETTINGS.theme !== 'light';
+  const gridColor = isDark ? 'rgba(48,54,61,0.8)' : 'rgba(208,215,222,0.8)';
+  const textColor = isDark ? '#8b949e' : '#656d76';
+
+  progressChart = new Chart(canvas, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Score %',
+        data: scores,
+        borderColor: '#f0a500',
+        backgroundColor: 'rgba(240,165,0,0.1)',
+        fill: true,
+        tension: 0.4,
+        pointBackgroundColor: scores.map(s => s>=70?'#3fb950':s>=50?'#f0a500':'#f85149'),
+        pointRadius: 5,
+        pointHoverRadius: 7,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: isDark ? '#161b22' : '#fff',
+          borderColor: isDark ? '#30363d' : '#d0d7de',
+          borderWidth: 1,
+          titleColor: isDark ? '#e6edf3' : '#1c2128',
+          bodyColor: isDark ? '#8b949e' : '#656d76',
+        }
+      },
+      scales: {
+        x: { grid: { color: gridColor }, ticks: { color: textColor } },
+        y: {
+          min: 0, max: 100,
+          grid: { color: gridColor },
+          ticks: { color: textColor, callback: v => v + '%' }
+        }
+      }
+    }
+  });
+}
+
+function exportCSV() {
+  const history = getHistory();
+  if (!history.length) { showToast('No history to export', 'info'); return; }
+
+  const header = 'Date,Subject,Chapter/Title,Score,Total,Percentage,Time(s)\n';
+  const rows = history.map(e => {
+    const pct = Math.round(e.score/e.total*100);
+    return `"${new Date(e.date).toLocaleString()}","${e.subject||''}","${e.title||e.chapter||''}",${e.score},${e.total},${pct}%,${e.timeTaken||0}`;
+  }).join('\n');
+
+  const blob = new Blob([header + rows], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'mcq_progress.csv';
+  a.click();
+  showToast('CSV exported!', 'success');
+}
+
+function clearHistory() {
+  if (!confirm('Clear all exam history? This cannot be undone.')) return;
+  localStorage.removeItem('mcq_history');
+  showToast('History cleared', 'info');
+  renderProgress();
+}
+
+function toggleMobileMenu() {
+  const m = document.getElementById('mobile-menu');
+  m.style.display = m.style.display === 'none' ? 'block' : 'none';
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  loadSettings();
+  renderProgress();
+});
+</script>
+</body>
+</html>

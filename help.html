@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Help — MCQ Portal</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+  .page-body { max-width: 820px; margin: 0 auto; padding: 32px 16px; }
+
+  .page-hero {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 2.5rem 1rem;
+    text-align: center;
+    position: relative; overflow: hidden;
+  }
+  .page-hero::before { content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(63,185,80,0.06) 0%,transparent 60%);pointer-events:none; }
+  .page-hero h1 { font-size:clamp(1.5rem,4vw,2rem);font-weight:800;margin-bottom:6px; }
+  .page-hero p { color:var(--muted);font-size:0.88rem; }
+
+  .help-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.75rem;
+    margin-bottom: 20px;
+    animation: fadeUp 0.4s ease;
+  }
+
+  .help-section h2 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text);
+  }
+
+  .help-section h2 i { color: var(--accent); }
+
+  .help-section p, .help-section li { font-size: 0.9rem; line-height: 1.7; color: var(--text); }
+  .help-section ul { padding-left: 1.25rem; }
+  .help-section li { margin-bottom: 6px; }
+
+  .code-block {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--text);
+    white-space: pre-wrap;
+    word-break: break-all;
+    margin: 12px 0;
+    position: relative;
+  }
+
+  .copy-code-btn {
+    position: absolute;
+    top: 8px; right: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--muted);
+    padding: 3px 8px;
+    font-size: 0.72rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: var(--font);
+  }
+
+  .copy-code-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  .shortcut-table { width: 100%; margin-top: 8px; }
+  .shortcut-table td { padding: 7px 8px; font-size: 0.85rem; border-bottom: 1px solid var(--border2); }
+  .shortcut-table tr:last-child td { border-bottom: none; }
+  .shortcut-table kbd {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 2px 7px;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+  }
+
+  .json-example {
+    color: var(--green);
+  }
+
+  .tip-box {
+    background: rgba(88,166,255,0.06);
+    border: 1px solid rgba(88,166,255,0.2);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin: 12px 0;
+    font-size: 0.85rem;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .tip-box i { color: var(--blue); margin-top: 1px; flex-shrink: 0; }
+
+  .contact-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.75rem;
+    text-align: center;
+    animation: fadeUp 0.4s ease;
+  }
+
+  .contact-card h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .contact-card p { color: var(--muted); font-size: 0.88rem; margin-bottom: 0; }
+  .contact-link { color: var(--accent); text-decoration: none; }
+  .contact-link:hover { text-decoration: underline; }
+  </style>
+</head>
+<body data-theme="dark">
+
+<nav class="navbar-custom">
+  <a class="nav-logo" href="index.html"><i class="bi bi-mortarboard-fill"></i> MCQ<span class="logo-dot">.</span>Portal</a>
+  <div class="nav-links">
+    <a class="nav-link" href="index.html"><i class="bi bi-house-fill"></i> Exam</a>
+    <a class="nav-link" href="library.html"><i class="bi bi-collection-fill"></i> Library</a>
+    <a class="nav-link" href="progress.html"><i class="bi bi-graph-up"></i> Progress</a>
+    <a class="nav-link active" href="help.html"><i class="bi bi-question-circle"></i> Help</a>
+  </div>
+  <div class="nav-actions">
+    <button class="icon-btn" onclick="toggleTheme()"><i id="theme-icon" class="bi bi-moon-fill"></i></button>
+    <button class="icon-btn" onclick="openSettings()"><i class="bi bi-gear-fill"></i></button>
+    <button class="icon-btn d-md-none" onclick="toggleMobileMenu()"><i class="bi bi-list"></i></button>
+  </div>
+</nav>
+<div id="mobile-menu" style="display:none; background:var(--surface); border-bottom:1px solid var(--border); padding:8px 16px;">
+  <a class="nav-link" href="index.html" style="display:flex"><i class="bi bi-house-fill me-2"></i> Exam</a>
+  <a class="nav-link" href="library.html" style="display:flex"><i class="bi bi-collection-fill me-2"></i> Library</a>
+  <a class="nav-link" href="progress.html" style="display:flex"><i class="bi bi-graph-up me-2"></i> Progress</a>
+  <a class="nav-link active" href="help.html" style="display:flex"><i class="bi bi-question-circle me-2"></i> Help</a>
+</div>
+
+<div class="page-hero">
+  <div style="display:inline-flex;align-items:center;gap:7px;background:rgba(63,185,80,0.1);border:1px solid rgba(63,185,80,0.25);border-radius:50px;padding:5px 13px;margin-bottom:1rem;font-size:0.72rem;font-weight:700;color:var(--green);letter-spacing:0.1em;text-transform:uppercase;">
+    <i class="bi bi-question-circle-fill"></i> Help & Guide
+  </div>
+  <h1>How to Use <span style="color:var(--green)">MCQ Portal</span></h1>
+  <p>Everything you need to create and take exams</p>
+</div>
+
+<div class="page-body">
+
+  <!-- Quick start -->
+  <div class="help-section">
+    <h2><i class="bi bi-rocket-takeoff-fill"></i> Quick Start</h2>
+    <ul>
+      <li>Or visit the <strong>Library</strong> page and click <strong>Start Exam</strong> on any pre-made set</li>
+      <li>Your progress is <strong>auto-saved</strong> — if you close the tab, you can resume!</li>
+      <li>Results are saved to <strong>Progress</strong> page (unless Practice Mode is on)</li>
+    </ul>
+  </div>
+
+  <!-- Generate Base64 -->
+  <div class="help-section">
+    <h2><i class="bi bi-code-square"></i> Generating a Base64 Exam String</h2>
+    <p>Use an AI (Grok, Claude, Gemini, ChatGPT) with this prompt to get a Base64 string:</p>
+
+    <div class="code-block" id="prompt-block">Create multiple choice questions in valid JSON format. Each question must have exactly 4 options, one correct answer, and a brief explanation.
+
+Subject: Mathematics
+Chapter: Logarithm
+Number: 30
+Difficulty level: medium
+Language: English
+Make questions SSC level standard.
+
+Required JSON structure:
+[
+  {
+    "question": "Question text here",
+    "options": ["a) Option A", "b) Option B", "c) Option C", "d) Option D"],
+    "answer": "Correct option text (must match one option exactly)",
+    "solution": "Brief explanation"
+  }
+]
+
+After creating the JSON, encode it using Python:
+import base64, json
+data = [PASTE_JSON_HERE]
+encoded = base64.b64encode(json.dumps(data, ensure_ascii=False).encode('utf-8')).decode()
+print(encoded)
+
+Give me ONLY the final Base64 string.</div>
+    <button class="copy-code-btn" onclick="copyToClipboard(document.getElementById('prompt-block').innerText,'Prompt copied!')">Copy</button>
+
+    <div class="tip-box">
+      <i class="bi bi-exclamation-triangle-fill"></i>
+      <div><strong>Critical for Bangla/Unicode:</strong> Always use <code>ensure_ascii=False</code> and <code>encode('utf-8')</code> in the Python code. This preserves Bangla text and math symbols (²³×÷π).</div>
+    </div>
+
+    <p><strong>Replace:</strong> Subject, Chapter, Number (how many questions), Difficulty (easy/medium/hard), Language (Bangla/English/Mixed)</p>
+  </div>
+
+  <!-- JSON format -->
+  <div class="help-section">
+    <h2><i class="bi bi-braces"></i> JSON Format Reference</h2>
+    <p>Each question must follow this structure exactly:</p>
+    <div class="code-block json-example">[
+  {
+    "question": "What is 2³ × 2⁵?",
+    "options": ["a) 2⁸", "b) 2⁵", "c) 2⁷", "d) 2³"],
+    "answer": "a) 2⁸",
+    "solution": "When multiplying same base, add exponents: 3+5=8 → 2⁸"
+  }
+]</div>
+    <ul>
+      <li><code>question</code> — The question text (supports Bangla, Unicode, math symbols)</li>
+      <li><code>options</code> — Array of exactly <strong>4</strong> options</li>
+      <li><code>answer</code> — Must match one option <strong>exactly</strong> (copy-paste!)</li>
+      <li><code>solution</code> — Optional explanation (shown in results)</li>
+    </ul>
+  </div>
+
+  <!-- Keyboard shortcuts -->
+  <div class="help-section">
+    <h2><i class="bi bi-keyboard-fill"></i> Keyboard Shortcuts</h2>
+    <table class="shortcut-table">
+      <tr><td><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> <kbd>4</kbd></td><td>Select option A/B/C/D on first question of page</td></tr>
+      <tr><td><kbd>Space</kbd></td><td>Go to next page (when pages enabled)</td></tr>
+      <tr><td><kbd>Enter</kbd></td><td>Submit exam</td></tr>
+      <tr><td><kbd>P</kbd></td><td>Pause / Resume (when pause button is enabled in Settings)</td></tr>
+      <tr><td><kbd>Ctrl+Enter</kbd></td><td>Start exam from Base64 input</td></tr>
+    </table>
+    <p style="margin-top:10px;font-size:0.82rem;color:var(--muted)">Shortcuts can be disabled in Settings.</p>
+  </div>
+
+  <!-- Settings guide -->
+  <div class="help-section">
+    <h2><i class="bi bi-gear-fill"></i> Settings Guide</h2>
+    <ul>
+      <li><strong>Your Name</strong> — Displayed on result screen</li>
+      <li><strong>Questions Per Page</strong> — Show 1, 2, 5, 10, 15, 20, 30, or All questions at once</li>
+      <li><strong>Practice Mode</strong> — Exams won't be saved to history</li>
+      <li><strong>Show Pause Button</strong> — Hidden by default, enable to show pause/resume</li>
+      <li><strong>Font Size</strong> — Small / Medium / Large / X-Large</li>
+      <li><strong>Sound Effects</strong> — Click sounds, last-minute warning, result fanfare</li>
+      <li><strong>Keyboard Shortcuts</strong> — Enable/disable all keyboard shortcuts</li>
+      <li><strong>Clear All Data</strong> — Wipes name, settings, history, and autosave</li>
+    </ul>
+  </div>
+
+  <!-- Library guide 
+  <div class="help-section">
+    <h2><i class="bi bi-collection-fill"></i> Adding Exams to Library</h2>
+    <p>Open <code>db.js</code> and add entries to the <code>EXAM_DB</code> array:</p>
+    <div class="code-block">{
+  id: "math-algebra-001",       // unique ID
+  title: "বীজগণিত মাস্টারক্লাস",
+  subject: "Mathematics",
+  chapter: "Algebra",
+  difficulty: "medium",         // easy / medium / hard
+  language: "Bangla",           // Bangla / English / Mixed
+  class: "SSC",
+  questionCount: 25,
+  b64: "PASTE_BASE64_STRING_HERE"
+},</div>
+  </div>
+-->
+
+  <!-- Contact -->
+  <div class="contact-card">
+    <i class="bi bi-envelope-fill" style="font-size:1.8rem;color:var(--accent);margin-bottom:8px;display:block"></i>
+    <h2>Contact</h2>
+    <p>Email: <a class="contact-link" href="mailto:a.binsharif1@gmail.com">a.binsharif1@gmail.com</a></p>
+    <p>Telegram: <a class="contact-link" href="https://t.me/01912021214">01912021214</a></p>
+  </div>
+
+</div>
+
+<div class="modal-overlay" id="settings-modal" onclick="if(event.target===this)closeSettings()">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div style="font-weight:700;font-size:1rem"><i class="bi bi-gear-fill me-2" style="color:var(--accent)"></i>Settings</div>
+      <button class="icon-btn" onclick="closeSettings()"><i class="bi bi-x-lg"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="setting-row">
+        <div><div class="setting-label">Sound Effects</div></div>
+        <label class="toggle-wrap"><input type="checkbox" id="set-sound" onchange="settingChanged('soundEnabled', this.checked)"><span class="toggle-slider"></span></label>
+      </div>
+      <div style="margin-top:16px">
+        <button class="btn-ghost w-100" onclick="clearAllData()" style="color:var(--red);border-color:rgba(248,81,73,0.3)">
+          <i class="bi bi-trash3-fill"></i> Clear All Data
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<script src="script.js"></script>
+<script>
+function toggleMobileMenu() {
+  const m = document.getElementById('mobile-menu');
+  m.style.display = m.style.display === 'none' ? 'block' : 'none';
+}
+document.addEventListener('DOMContentLoaded', () => loadSettings());
+</script>
+</body>
+</html>
